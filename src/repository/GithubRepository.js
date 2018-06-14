@@ -1,7 +1,11 @@
-export default class GithubService {
+export default class GithubRepository {
   constructor(accessToken) {
     this.accessToken = accessToken;
     this.baseUri = 'https://api.github.com/repos/'
+  }
+
+  initializeConfigRepository() {
+
   }
 
   listIssues(repository) {
@@ -14,11 +18,12 @@ export default class GithubService {
 
   updateStatus(repository, number, statusCode, storyPoint) {
     const authHeader = this.accessToken ? {'Authorization': 'token ' + this.accessToken} : {};
+    const labels = ['status:' + statusCode, 'point:' + storyPoint];
     return fetch(this.baseUri + repository + '/issues/' + number, {
       method: 'PATCH',
       mode: 'cors',
       body: JSON.stringify({
-        labels: ['sトークンtatus-' + statusCode, 'point-' + storyPoint]
+        labels: labels
       }),
       headers: authHeader
     }).then(res => res.json());
@@ -27,7 +32,7 @@ export default class GithubService {
   createIssue(issue) {
     const authHeader = this.accessToken ? {'Authorization': 'token ' + this.accessToken} : {};
     const { repository, title, description, storyPoint } = issue;
-    const pointLabel = 'point-' + storyPoint;
+    const pointLabel = 'point:' + storyPoint;
     const statusLabel = 'status-pbl';
     return fetch(this.baseUri + repository + '/issues', {
       method: 'POST',
